@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/screens/cart_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/app_drawer.dart';
 import '../widgets/products_grid.dart';
 import '../widgets/badge.dart';
-
 import '../providers/cart.dart';
+import './cart_screen.dart';
 
 enum FilterOptions {
   Favorites,
@@ -14,35 +14,38 @@ enum FilterOptions {
 
 class ProductsOverviewScreen extends StatefulWidget {
   @override
-  State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
+  _ProductsOverviewScreenState createState() => _ProductsOverviewScreenState();
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
-  bool _showOnlyFavoritesData = false;
+  var _showOnlyFavorites = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('MyShop'),
-        actions: [
+        actions: <Widget>[
           PopupMenuButton(
             onSelected: (FilterOptions selectedValue) {
               setState(() {
                 if (selectedValue == FilterOptions.Favorites) {
-                  _showOnlyFavoritesData = true;
+                  _showOnlyFavorites = true;
                 } else {
-                  _showOnlyFavoritesData = false;
+                  _showOnlyFavorites = false;
                 }
               });
             },
-            icon: Icon(Icons.more_vert),
+            icon: Icon(
+              Icons.more_vert,
+            ),
             itemBuilder: (_) => [
               PopupMenuItem(
-                child: Text('Only favorites'),
+                child: Text('Only Favorites'),
                 value: FilterOptions.Favorites,
               ),
               PopupMenuItem(
-                child: Text('Show all'),
+                child: Text('Show All'),
                 value: FilterOptions.All,
               ),
             ],
@@ -53,15 +56,18 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               value: cart.itemCount.toString(),
             ),
             child: IconButton(
-              onPressed: () => {
-                Navigator.of(context).pushNamed(CartScreen.routeName),
+              icon: Icon(
+                Icons.shopping_cart,
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
               },
-              icon: Icon(Icons.shopping_cart),
             ),
-          )
+          ),
         ],
       ),
-      body: ProductsGrid(_showOnlyFavoritesData),
+      drawer: AppDrawer(),
+      body: ProductsGrid(_showOnlyFavorites),
     );
   }
 }
